@@ -1,0 +1,20 @@
+index = "/Users/AaronGreen/Desktop/CS410/expertsearch/data/idx/FacultyDataset-idx"
+query-judgements = "/Users/AaronGreen/Desktop/CS410/expertsearch/data/FacultyDataset/FacultyDataset-qrels.txt"
+prefix = "/Users/AaronGreen/Desktop/CS410/expertsearch/data"
+corpus = "file.toml"
+dataset = "FacultyDataset"
+
+[query-runner]
+timeout = 120
+query-path = "/Users/AaronGreen/Desktop/CS410/expertsearch/data/FacultyDataset/FacultyDataset-queries.txt"
+query-id-start = 0
+
+[[analyzers]]
+ngram = 1
+method = "ngram-word"
+
+[[analyzers.filter]]
+type = "icu-tokenizer"
+
+[[analyzers.filter]]
+type = "lowercase"

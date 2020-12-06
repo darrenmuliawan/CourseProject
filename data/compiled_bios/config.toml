@@ -1,0 +1,19 @@
+index = "FacultyDataset-idx"
+prefix = "./data/"
+corpus = "file.toml"
+dataset = "compiled_bios"
+
+[query-runner]
+timeout = 120
+query-path = "FacultyDataset-queries.txt"
+query-id-start = 0
+
+[[analyzers]]
+ngram = 1
+method = "ngram-word"
+
+[[analyzers.filter]]
+type = "icu-tokenizer"
+
+[[analyzers.filter]]
+type = "lowercase"

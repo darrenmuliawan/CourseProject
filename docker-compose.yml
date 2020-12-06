@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    mainapp:
+        build:
+            context: .
+            dockerfile: ./docker/mainapp/Dockerfile
+        volumes:
+            - "/data:/data"
+            - "/srv/mainapp/artifacts:/srv/mainapp/artifacts"
+
+        ports:
+            - "8000:8000"
+        restart: always
+    nginx:
+        build: ./docker/nginx
+        volumes:
+            - "/srv/nginx/log:/var/log/nginx/log"
+        ports:
+            - "80:80"
+        links:
+            - mainapp
+        restart: always

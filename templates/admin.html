@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./static/admin.css">
+    <title>Expert Search Admin</title>
+  </head>
+  <body>
+      <center>
+        <h2>
+          Expert Search Admin Portal
+        </h2>
+        <hr>
+        <div id="rankerSuccessDiv"></div>
+        <h4>
+            Set a new ranker for the expert search engine
+            <br>
+        </h4>
+        <h5>
+            <form>
+                Ranker Gitlab Project ID:
+                <br>
+                <input type="text" id="projectid" class="admininput">
+                <br>
+                <br>
+                Gitlab API Token:
+                <br>
+                <input type="password" id="apitoken" class="admininput">
+                <br>
+                <br>
+                <input type="button" id="submitButton" value="Submit" class="adminbtn">
+            </form>
+        </h5>
+
+        <input type="button" id="viewRankerButton" value="View Current Ranker" class="adminbtn">
+    </center>
+
+    <h6>
+        <div id="rankerContentsDiv" class="show-code"></div>
+    </h6>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./static/admin.js"></script>    
+  </body>
+</html>

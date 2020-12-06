@@ -1,0 +1,3 @@
+type = "file-corpus"
+list = "dataset"
+metadata = [{name = "doc_name", type = "string"},{name = "university", type = "string"},{name = "department", type = "string"},{name = "fac_name", type = "string"},{name = "fac_url", type = "string"},{name = "state", type = "string"},{name = "country", type = "string"},{name = "email", type = "string"}]
