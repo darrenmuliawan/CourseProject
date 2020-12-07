@@ -2,6 +2,7 @@ import requests
 import json
 import urllib.parse
 import codecs
+import os
 
 API_KEY = 'AIzaSyDH6j8kqZHQEx5Z0H9KSWzpUweIKKl3CpI'
 
@@ -75,4 +76,4 @@ def main(uni_path,location_path):
 		f.write(states[-1]+'\t'+countries[-1]) 
 
 if __name__ == '__main__':
-	main('../data/unis','../data/location')
+	main(os.path.dirname(os.path.realpath(__file__)) + '/../data/unis', os.path.dirname(os.path.realpath(__file__)) + '/../data/location')

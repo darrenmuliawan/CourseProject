@@ -1,5 +1,5 @@
-dataset = "compiled_bios"
 corpus = "file.toml"
+dataset = "compiled_bios"
 prefix = "./data/"
 index = "FacultyDataset-idx"
 [[analyzers]]

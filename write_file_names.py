@@ -1,6 +1,6 @@
-import os,codecs,json
+import os,codecs,json,sys
 
-def main(dir_,out_file1,out_file2,dept_path,uni_path,names_path,url_path,loc_path,email_path,filter_file1,filter_file2):
+def main(dir_,out_file1,out_file2,dept_path,uni_path,names_path,url_path,loc_path,email_path,filter_file1,filter_file2,start_index):
 	with open(uni_path,'r') as f:
 		unis = f.readlines()
 
@@ -39,22 +39,20 @@ def main(dir_,out_file1,out_file2,dept_path,uni_path,names_path,url_path,loc_pat
 
 	print(emails[-2:],len(emails),len(corrected_names),len(locs),len(depts),len(unis),num_bios)
 
-	with open(out_file1,'w') as f1:
-		with codecs.open(out_file2,'w',encoding='utf-8',errors='ignore') as f2:
-			for i in range(num_bios)[:-1]:
-				f1.write('[None] '+str(i)+'.txt')
-				f1.write('\n')
+	with open(out_file1,'a') as f1:
+		with codecs.open(out_file2,'a',encoding='utf-8',errors='ignore') as f2:
+			for i in range(start_index, num_bios):
+				f1.write('[None] '+str(i)+'.txt' +'\n')
 				if emails[i]=='\n':
 					emails[i]='None'
 				f2.write(str(i)+'.txt'+'\t'
-					+unis[i].strip()+'\t'+depts[i].strip()+'\t'+corrected_names[i]+'\t'+urls[i].strip()+'\t'+locs[i].strip()+'\t'+emails[i].strip())
-				f2.write('\n')
+					+unis[i].strip()+'\t'+depts[i].strip()+'\t'+corrected_names[i]+'\t'+urls[i].strip()+'\t'+locs[i].strip()+'\t'+emails[i].strip()+"\n")
 
-			f1.write('[None] '+str(num_bios-1)+'.txt')
-			if emails[num_bios-1]=='\n':
-					emails[num_bios-1]='None'
-			f2.write(str(num_bios-1)+'.txt'+'\t'
-				+unis[num_bios-1].strip()+'\t'+depts[num_bios-1].strip()+'\t'+corrected_names[num_bios-1]+'\t'+urls[num_bios-1].strip()+'\t'+locs[num_bios-1].strip()+'\t'+emails[num_bios-1].strip())
+			# f1.write('[None] '+str(num_bios-1)+'.txt')
+			# if emails[num_bios-1]=='\n':
+			# 		emails[num_bios-1]='None'
+			# f2.write(str(num_bios-1)+'.txt'+'\t'
+			# 	+unis[num_bios-1].strip()+'\t'+depts[num_bios-1].strip()+'\t'+corrected_names[num_bios-1]+'\t'+urls[num_bios-1].strip()+'\t'+locs[num_bios-1].strip()+'\t'+emails[num_bios-1].strip())
 
 	unis_dict = {"unis":sorted([uni.strip() for uni in list(set(unis))])}
 	all_countries = set()
@@ -77,7 +75,22 @@ def main(dir_,out_file1,out_file2,dept_path,uni_path,names_path,url_path,loc_pat
 	
 
 if __name__ == '__main__':
-	main('../data/compiled_bios','../compiled_bios/dataset-full-corpus.txt','../data/compiled_bios/metadata.dat','../data/depts','../data/unis','../data/names.txt','../data/urls','../data/location','../data/emails','../data/filter_data/unis.json','../data/filter_data/locs.json')
+	args = sys.argv
+	start_index = int(args[1])
+	main(
+		os.path.dirname(os.path.realpath(__file__)) + '/data/compiled_bios',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/compiled_bios/dataset-full-corpus.txt',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/compiled_bios/metadata.dat',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/depts',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/unis',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/names.txt',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/urls',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/location',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/emails',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/filter_data/unis.json',
+		os.path.dirname(os.path.realpath(__file__)) + '/data/filter_data/locs.json',
+		start_index
+	)
 
 
 
