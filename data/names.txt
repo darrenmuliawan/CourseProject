@@ -6525,3 +6525,27 @@ Darrell Long Jishen Zhao
 Mark Weiser
 Adviseesdaniel Anderson
 David Andersen
+Maria Balcan
+Nathan Beckmann
+Guy Blelloch
+Manuel Blum
+Stephen Brookes
+David Brumley
+Randal Bryant
+Tianqi Chen
+Edmund Clarke
+Keenan Crane
+Karl Crary
+Roger Dannenberg
+Anupam Datta
+Michael Erdmann
+Scott Fahlman
+Christos Faloutsos
+Matthew Fredrikson
+Acar
+Gregory Ganger
+Garth Gibson
+Seth Goldstein
+Vipul Goyal
+Anupam Gupta
+Venkatesan Guruswami

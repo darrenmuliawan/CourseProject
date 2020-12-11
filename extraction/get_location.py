@@ -31,7 +31,7 @@ def main(uni_path,location_path):
 
 			place_params['input'] = uni 
 			url = base_url+place_url+urllib.parse.urlencode(place_params)
-			# print (url)
+			print (url)
 			resp = requests.get(url)
 			place_id = None
 			try:

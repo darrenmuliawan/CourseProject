@@ -8,10 +8,14 @@ import os
 import metapy
 import json
 import subprocess
+import sys
+import time
 
 compiled_bios_path = "./data/compiled_bios/"
+new_bios_path = "./new_bios/"
+fail_bios_path = "./fail_bios/"
 
-def crawler(email_table):
+def crawler(email_table, max_found):
     # variables
     urls = []
     unis = []
@@ -19,6 +23,10 @@ def crawler(email_table):
 
     # GET THE CURRENT MAX NUMBER OF .TXT BIOS FILE
     start_index = len(os.listdir(compiled_bios_path)) - 5
+
+    # GET THE CURRENT MAX NUMBER OF .TXT IN NEW_BIOS AND FAIL_BIOS
+    new_bios_idx = len(os.listdir(new_bios_path))
+    fail_bios_idx = len(os.listdir(fail_bios_path))
 
     # GET LIST OF URLS FROM SIGNUP SHEET
     signupSheets = "./data/MP2_Part1 Signup - Sheet1.csv"
@@ -33,10 +41,10 @@ def crawler(email_table):
     print('Found ' + str(len(urls)) + ' URLs.')
     
     # GET NEW FACULTY MEMBER'S BIO PAGE URL
-    bios, emails, new_unis, new_depts = getNewFacultyBiosURL(urls, email_table, unis, depts)
+    bios, emails, new_unis, new_depts = getNewFacultyBiosURL(urls, email_table, unis, depts, max_found)
 
     # UPDATE DATA FILES
-    updateNewBios(bios, emails, new_unis, new_depts, start_index)
+    updateNewBios(bios, emails, new_unis, new_depts, start_index, new_bios_idx, fail_bios_idx)
     updateOtherFiles(start_index)
 
 def updateOtherFiles(start_index):
@@ -50,15 +58,9 @@ def updateOtherFiles(start_index):
     print("\nStart name extraction from " + str(start_index) + ".txt")
     subprocess.call(('python3', path_extract_name, str(start_index)))
 
-    #print("\nStart location extraction")
-    #subprocess.call(('python3', path_extract_location))
-    #os.system('python3 ' + path_extract_name)
-    #os.system('python3 ' + path_extract_location)
-
     # RUN write_file_names.py
     print('\nStart write_file_names.py')
     subprocess.call(('python3', path_write_file_names, str(start_index)))
-    #os.system('python3 ' + path_write_file_names)
 
     # DELETE THE INDEX
     print('\nDeleting FacultyDataset-idx folder...')
@@ -71,10 +73,13 @@ def updateOtherFiles(start_index):
     searchconfig = dataconfig[environ]['searchconfig']
     index = metapy.index.make_inverted_index(searchconfig)
 
-def updateNewBios(bios, emails, unis, depts, start_index):
+    # # RUN THE WEB APP
+    # os.system('gunicorn server:app -b 127.0.0.1:8095')
+
+def updateNewBios(bios, emails, unis, depts, start_index, new_bios_idx, fail_bios_idx):
     filename = start_index
-    new_bios_file = open("new_bios.txt", "a")
-    fail_add_bios_file = open("fail_bios.txt", "a")
+    new_bios_file = open("./new_bios/trial-" + str(new_bios_idx) + ".txt", "a")
+    fail_add_bios_file = open("./fail_bios/trial-" + str(fail_bios_idx) + ".txt", "a")
     email_file = open("./data/emails", "a")
     unis_file = open("./data/unis", "a")
     depts_file = open("./data/depts", "a")
@@ -113,7 +118,9 @@ def updateNewBios(bios, emails, unis, depts, start_index):
         email_file.write(email + "\n")
         depts_file.write(dept + "\n")
         unis_file.write(uni + "\n")
-        location_file.write("Illinois" + "\tUnited States\n")
+        location_file.write("UNKNOWN" + "\tUnited States\n")
+        # uni_location = getUniLocation(uni)
+        # location_file.write(uni_location + "\n")
 
         # RECORD NEW BIOS
         new_bios_file.write(bio + "\n")
@@ -128,10 +135,25 @@ def updateNewBios(bios, emails, unis, depts, start_index):
     unis_file.close()
     location_file.close()
 
-def getNewFacultyBiosURL(urls, email_table, unis, depts):
+# def getUniLocation(uni):
+#     API_KEY = 'AIzaSyDH6j8kqZHQEx5Z0H9KSWzpUweIKKl3CpI'
+#     base_url = "https://maps.googleapis.com/maps/api/place/"
+#     place_url = "findplacefromtext/json?"
+#     place_params = {'fields':'place_id','key':API_KEY,'inputtype':'textquery', "input": uni}
+#     detail_url = "details/json?"
+#     detail_params = {'fields':'address_components','key':API_KEY}
+#     url_encoded_uni = uni.replace(" ", "+")
+#     url = base_url + place_url + "fields=place_id&key=" + API_KEY + "&inputtype=textquery&input=" + url_encoded_uni
+#     print(url)
+#     return ""
+
+def getNewFacultyBiosURL(urls, email_table, unis, depts, max_found):
     new_faculty_bios_url = []
     found = 0
-    for i in range(1):
+    
+    for i in range(len(urls)):
+        if found == max_found:
+            break
         url = urls[i]
         uni = unis[i]
         dept = depts[i]
@@ -163,7 +185,7 @@ def getNewFacultyBiosURL(urls, email_table, unis, depts):
                     element = element.parent
                     if element is None:
                         break
-            if found == 2:
+            if found == max_found:
                 break
 
     total_new = len(new_faculty_bios_url)
@@ -191,8 +213,32 @@ def initHashTable():
     return hash_table
 
 def main():
-    email_table = initHashTable()
-    crawler(email_table)
+    args = sys.argv
+    args_len = len(args)
+    max_found = -1
+    run_forever = False
+
+    if args_len == 1:
+        print("Looking for all new faculty members...")
+    elif args_len == 3:
+        max_found = args[1]
+        run_forever = True if args[2] == 'true' else False
+        print("Looking for " + args[1] + " new faculty members...\nRun forever: " + str(run_forever))
+    else:
+        print("Invalid args")
+        return
+
+    while True:
+        email_table = initHashTable()
+        crawler(email_table, int(max_found))
+
+        if not run_forever:
+            break
+        else:
+            print("Starting next iteration in 10 seconds... Press Ctrl + C to stop")
+            time.sleep(10)
+            print("Starting next iteration...")
+            time.sleep(1)
 
 if __name__ == '__main__':
     main()
