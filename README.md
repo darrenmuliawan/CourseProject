@@ -78,4 +78,4 @@ gunicorn server:app -b 127.0.0.1:8095
 Open the original ExpertSearch ```http://timan102.cs.illinois.edu/expertsearch//``` and open the updated ExpertSearch at ```localhost:8095```. Find the name of recently added faculty members by looking at ```new_bios/trial-n.txt``` and open the bio URL. The new members should only appear in the updated ExpertSearch.
 
 # Video Link
-Will update soon!
+https://mediaspace.illinois.edu/media/t/1_ybtlfoxk
